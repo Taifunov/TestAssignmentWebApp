@@ -1,0 +1,123 @@
+﻿@using TestAssignmentWebApp.Components.QuillEditor.Events
+@inject IJSRuntime JsRuntime
+
+
+@if (ShowToolbar)
+{
+    <div @ref="_toolBar">
+        @ToolbarContent
+    </div>
+}
+
+<div @ref="_quillElement" style="height: 300px; overflow-y: auto;">
+    @EditorContent
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public RenderFragment? EditorContent { get; set; }
+
+    [Parameter, EditorRequired]
+    public RenderFragment? ToolbarContent { get; set; }
+
+    [Parameter]
+    public string Value { get; set; } = string.Empty;
+
+    [Parameter]
+    public EventCallback<string> ValueChanged { get; set; }
+
+    [Parameter]
+    public bool ShowToolbar { get; set; } = true;
+
+    [Parameter]
+    public string Placeholder { get; set; } = "Type or paste your HTML content here...";
+
+    [Parameter]
+    public string Theme { get; set; } = "snow";
+
+    [Parameter]
+    public string DebugLevel { get; set; } = "info";
+
+    private string _previousValue = string.Empty;
+
+    private ElementReference _quillElement;
+    private ElementReference _toolBar;
+    private QuillEventCallbackInvokeHelper _quillEventCallbackInvokeHelper = null!;
+    private bool _quillCreated = false;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            try
+            {
+                _ = await QuillInterop.CreateQuillAsync(
+                    JsRuntime,
+                    _quillElement,
+                    _toolBar,
+                    false,
+                    Placeholder,
+                    Theme,
+                    DebugLevel);
+
+                _quillCreated = true;
+                RegisterQuillEvents();
+            }
+            catch (Exception ex)
+            {
+                await Console.Error.WriteLineAsync($"Error initializing Quill: {ex}");
+            }
+        }
+    }
+
+
+    public async Task<string?> GetHtmlAsync()
+    {
+        return await QuillInterop.GetHtmlAsync(JsRuntime, _quillElement);
+    }
+    
+    private async Task OnQuillEvent(string eventName, object[] arguments)
+    {
+        switch (eventName)
+        {
+            case "text-change":
+                if (ValueChanged.HasDelegate)
+                {
+                    var newHtml = await GetHtmlAsync() ?? string.Empty;
+                    Value = newHtml;
+
+                    await ValueChanged.InvokeAsync(newHtml);
+                }
+                break;
+        }
+    }
+
+    private void RegisterQuillEvents()
+    {
+        _quillEventCallbackInvokeHelper = new QuillEventCallbackInvokeHelper(OnQuillEvent);
+
+        if (ValueChanged.HasDelegate)
+        {
+            RegisterQuillEventCallback("text-change", ValueChanged.HasDelegate);
+        }
+    }
+
+    private void RegisterQuillEventCallback(string eventName, bool hasDelegate)
+    {
+        if (!_quillCreated)
+        {
+            return;
+        }
+
+        if (hasDelegate)
+        {
+            var objRef = DotNetObjectReference.Create(_quillEventCallbackInvokeHelper);
+
+            QuillInterop.RegisterQuillEvent(JsRuntime, _quillElement, objRef, eventName);
+        }
+        else
+        {
+            QuillInterop.UnregisterQuillEvent(JsRuntime, _quillElement, eventName);
+        }
+    }
+}

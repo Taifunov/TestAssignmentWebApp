@@ -7,28 +7,17 @@ public static class QuillInterop
 {
     #region Constants
 
-    private const string strCreateQuill = "QuillFunctions.createQuill";
-    private const string strGetText = "QuillFunctions.getQuillText";
-    private const string strGetHTML = "QuillFunctions.getQuillHTML";
-    private const string strGetContent = "QuillFunctions.getQuillContent";
-    private const string strLoadQuillContent = "QuillFunctions.loadQuillContent";
-    private const string strEnableQuillEditor = "QuillFunctions.enableQuillEditor";
-    private const string strInsertImage = "QuillFunctions.insertQuillImage";
+    private const string CreateQuillFunction = "QuillFunctions.createQuill";
+
+    private const string GetHtmlFunction = "QuillFunctions.getQuillHTML";
+
+    private const string RegisterQuillEventFunction = "QuillFunctions.registerQuillEvent";
+
+    private const string UnregisterQuillEventFunction = "QuillFunctions.unregisterQuillEvent";
 
     #endregion Constants
 
-    /// <summary>
-    /// Creates the quill.
-    /// </summary>
-    /// <param name="jsRuntime">The js runtime.</param>
-    /// <param name="quillElement">The quill element.</param>
-    /// <param name="toolbar">The toolbar.</param>
-    /// <param name="readOnly">if set to <c>true</c> [read only].</param>
-    /// <param name="placeholder">The placeholder.</param>
-    /// <param name="theme">The theme.</param>
-    /// <param name="debugLevel">The debug level.</param>
-    /// <returns>ValueTask&lt;System.Object&gt;.</returns>
-    internal static ValueTask<object> CreateQuill(
+    internal static ValueTask<object> CreateQuillAsync(
         IJSRuntime jsRuntime,
         ElementReference quillElement,
         ElementReference toolbar,
@@ -38,97 +27,43 @@ public static class QuillInterop
         string debugLevel)
     {
         return jsRuntime.InvokeAsync<object>(
-            strCreateQuill,
-            quillElement, toolbar, readOnly,
-            placeholder, theme, debugLevel);
+            CreateQuillFunction,
+            quillElement,
+            toolbar,
+            readOnly,
+            placeholder,
+            theme,
+            debugLevel);
     }
 
-    /// <summary>
-    /// Gets the text.
-    /// </summary>
-    /// <param name="jsRuntime">The js runtime.</param>
-    /// <param name="quillElement">The quill element.</param>
-    /// <returns>ValueTask&lt;System.String&gt;.</returns>
-    internal static ValueTask<string> GetText(
+    internal static ValueTask<string> GetHtmlAsync(
         IJSRuntime jsRuntime,
         ElementReference quillElement)
     {
         return jsRuntime.InvokeAsync<string>(
-            strGetText,
+            GetHtmlFunction,
             quillElement);
     }
-
-    /// <summary>
-    /// Gets the HTML.
-    /// </summary>
-    /// <param name="jsRuntime">The js runtime.</param>
-    /// <param name="quillElement">The quill element.</param>
-    /// <returns>ValueTask&lt;System.String&gt;.</returns>
-    internal static ValueTask<string> GetHTML(
-        IJSRuntime jsRuntime,
-        ElementReference quillElement)
-    {
-        return jsRuntime.InvokeAsync<string>(
-            strGetHTML,
-            quillElement);
-    }
-
-    /// <summary>
-    /// Gets the content.
-    /// </summary>
-    /// <param name="jsRuntime">The js runtime.</param>
-    /// <param name="quillElement">The quill element.</param>
-    /// <returns>ValueTask&lt;System.String&gt;.</returns>
-    internal static ValueTask<string> GetContent(
-        IJSRuntime jsRuntime,
-        ElementReference quillElement)
-    {
-        return jsRuntime.InvokeAsync<string>(
-            strGetContent,
-            quillElement);
-    }
-
-    /// <summary>
-    /// Loads the content of the quill.
-    /// </summary>
-    /// <param name="jsRuntime">The js runtime.</param>
-    /// <param name="quillElement">The quill element.</param>
-    /// <param name="Content">The content.</param>
-    /// <returns>ValueTask&lt;System.Object&gt;.</returns>
-    internal static ValueTask<object> LoadQuillContent(
+    
+    
+    internal static ValueTask<object> RegisterQuillEvent(
         IJSRuntime jsRuntime,
         ElementReference quillElement,
-        string Content)
+        object objRef,
+        string eventName)
     {
         return jsRuntime.InvokeAsync<object>(
-            strLoadQuillContent,
-            quillElement, Content);
+            RegisterQuillEventFunction,
+            quillElement, objRef, eventName);
     }
 
-    /// <summary>
-    /// Enables the quill editor.
-    /// </summary>
-    /// <param name="jsRuntime">The js runtime.</param>
-    /// <param name="quillElement">The quill element.</param>
-    /// <param name="mode">if set to <c>true</c> [mode].</param>
-    /// <returns>ValueTask&lt;System.Object&gt;.</returns>
-    internal static ValueTask<object> EnableQuillEditor(
+    internal static ValueTask<object> UnregisterQuillEvent(
         IJSRuntime jsRuntime,
         ElementReference quillElement,
-        bool mode)
+        string eventName)
     {
         return jsRuntime.InvokeAsync<object>(
-            strEnableQuillEditor,
-            quillElement, mode);
-    }
-
-    internal static ValueTask<object> InsertQuillImage(
-        IJSRuntime jsRuntime,
-        ElementReference quillElement,
-        string imageURL)
-    {
-        return jsRuntime.InvokeAsync<object>(
-            strInsertImage,
-            quillElement, imageURL);
+            UnregisterQuillEventFunction,
+            quillElement, eventName);
     }
 }

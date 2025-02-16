@@ -7,22 +7,25 @@
     <base href="/" />
 
     <!-- Quill stylesheet -->
-    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet" />
-    
-    <link rel="stylesheet" href="bootstrap/bootstrap.min.css" />
-    <link rel="stylesheet" href="app.css" />
+    <link href="lib/quill/quill.snow.css" rel="stylesheet">
+    <link href="lib/quill/quill.bubble.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="/assets/styles/bootstrap/bootstrap.min.css" />
+    <link rel="stylesheet" href="/assets/styles/app.css" />
     <link rel="stylesheet" href="TestAssignmentWebApp.styles.css" />
-    <link rel="icon" type="image/png" href="favicon.png" />
+    <link rel="icon" type="image/png" href="/assets/images/favicon.png" />
     <HeadOutlet />
 </head>
 
 <body>
-    <Routes />
-    <script src="_framework/blazor.web.js"></script>
+<Routes />
+
+<script src="_framework/blazor.web.js"></script>
 
     <!-- Quill library -->
-    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
-    <script src="BlazorQuill.js"></script>
+    <script src="lib/quill/quill.js"></script>
+    <script src="assets/js/quill-blot-formatter.min.js"></script>
+    <script src="assets/js/BlazorQuill.js"></script>
 </body>
 
 </html>

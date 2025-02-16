@@ -1,6 +1,51 @@
 ﻿@page "/"
-@using TestAssignmentWebApp.Components.QuillEditor
+@rendermode InteractiveServer
 
 <PageTitle>Home</PageTitle>
 
-<QuillEditor />
+<div class="card">
+    <div class="card-body">
+        <h3 class="card-title">HTML Editor</h3>
+        <HtmlEditor ShowToolbar="@_showToolbar" @bind-Value="QuillHtmlContent">
+            <ToolbarContent>
+                <select class="ql-header">
+                    <option selected=""></option>
+                    <option value="1"></option>
+                    <option value="2"></option>
+                    <option value="3"></option>
+                </select>
+                <span class="ql-formats">
+                    <button class="ql-bold"></button>
+                    <button class="ql-italic"></button>
+                    <button class="ql-underline"></button>
+                </span>
+                <span class="ql-formats">
+                    <button class="ql-link"></button>
+                    <button class="ql-image"></button>
+                </span>
+            </ToolbarContent>
+            <EditorContent>
+            </EditorContent>
+        </HtmlEditor>
+    </div>
+    <div class="card-footer">
+        <h3> Live preview area</h3>
+        <div style="height: 5px; width: 100%;"></div>
+        <div style="width: 100%; background-color: #dcdcdc;">
+            @((MarkupString)QuillHtmlContent)
+            @QuillHtmlContent
+        </div>
+
+        <button class="btn btn-primary" @onclick="ToggleToolbar">
+            @(_showToolbar ? "Hide" : "Show") Toolbar
+        </button>
+    </div>
+</div>
+
+@code {
+    private bool _showToolbar = true;
+
+    private void ToggleToolbar() => _showToolbar = !_showToolbar;
+
+    private string? QuillHtmlContent { get; set; } = string.Empty;
+}
