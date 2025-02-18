@@ -1,12 +1,14 @@
 ﻿@page "/"
+@using TestAssignmentWebApp.Components.List
+@using TestAssignmentWebApp.Components.Modal
 @rendermode InteractiveServer
 
 <PageTitle>Home</PageTitle>
 
-<div class="card">
+<div class="card w-50" tabindex="0">
     <div class="card-body">
         <h3 class="card-title">HTML Editor</h3>
-        <HtmlEditor ShowToolbar="@_showToolbar" @bind-Value="QuillHtmlContent">
+        <HtmlEditor @ref="quilElementReference" ShowToolbar="@_showToolbar" @bind-Value="QuillHtmlContent" Id="htmlEditor">
             <ToolbarContent>
                 <select class="ql-header">
                     <option selected=""></option>
@@ -28,7 +30,7 @@
             </EditorContent>
         </HtmlEditor>
     </div>
-    <div class="card-footer">
+    <div class="card-footer" id="card-element">
         <h3> Live preview area</h3>
         <div style="height: 5px; width: 100%;"></div>
         <div style="width: 100%; background-color: #dcdcdc;">
@@ -39,13 +41,39 @@
         <button class="btn btn-primary" @onclick="ToggleToolbar">
             @(_showToolbar ? "Hide" : "Show") Toolbar
         </button>
+        <button class="btn btn-primary" @onclick="() => ModalDialog?.Open()">
+            Click me!
+        </button>
     </div>
+
+    <ModalDialog @ref="ModalDialog" Title="@ModalTitle" TargetElement="card-element">
+        <ListComponent
+            DataSource="_countries"
+            ButtonEvent="(string country) => InsertCountryAtCursor(country)"
+            />
+    </ModalDialog>
 </div>
 
 @code {
     private bool _showToolbar = true;
 
+    private const string ModalTitle = "Country List";
+
+    private readonly List<string> _countries = ["USA", "Canada", "Mexico", "UK", "Germany"];
+
     private void ToggleToolbar() => _showToolbar = !_showToolbar;
 
+    private ModalDialog? ModalDialog { get; set; }
+
+    private HtmlEditor? quilElementReference;
+
     private string? QuillHtmlContent { get; set; } = string.Empty;
+
+    private async Task InsertCountryAtCursor(string country)
+    {
+        if (quilElementReference != null)
+        {
+            await quilElementReference.InsertTextAtCursor(country);
+        }
+    }
 }

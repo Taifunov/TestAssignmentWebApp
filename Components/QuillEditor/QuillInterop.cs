@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 
 namespace TestAssignmentWebApp.Components.QuillEditor;
@@ -14,6 +15,10 @@ public static class QuillInterop
     private const string RegisterQuillEventFunction = "QuillFunctions.registerQuillEvent";
 
     private const string UnregisterQuillEventFunction = "QuillFunctions.unregisterQuillEvent";
+
+    private const string InsertTextAtCursorFunction = "QuillFunctions.insertTextAtCursor";
+
+    private const string GetElementPositionByIdFunction = "getElementPositionById";
 
     #endregion Constants
 
@@ -44,8 +49,17 @@ public static class QuillInterop
             GetHtmlFunction,
             quillElement);
     }
-    
-    
+
+    internal static ValueTask<object> InsertTextAtCursor(
+        IJSRuntime jsRuntime,
+        ElementReference quillElement,
+        string content)
+    {
+        return jsRuntime.InvokeAsync<object>(
+            InsertTextAtCursorFunction,
+            quillElement, content);
+    }
+
     internal static ValueTask<object> RegisterQuillEvent(
         IJSRuntime jsRuntime,
         ElementReference quillElement,

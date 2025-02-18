@@ -1,7 +1,6 @@
 ﻿@using TestAssignmentWebApp.Components.QuillEditor.Events
 @inject IJSRuntime JsRuntime
 
-
 @if (ShowToolbar)
 {
     <div @ref="_toolBar">
@@ -9,7 +8,7 @@
     </div>
 }
 
-<div @ref="_quillElement" style="height: 300px; overflow-y: auto;">
+<div @ref="_quillElement" style="height: 300px; overflow-y: auto;" id="@Id">
     @EditorContent
 </div>
 
@@ -37,6 +36,9 @@
 
     [Parameter]
     public string DebugLevel { get; set; } = "info";
+
+    [Parameter] 
+    public string Id { get; set; } = string.Empty;
 
     private string _previousValue = string.Empty;
 
@@ -74,6 +76,15 @@
     public async Task<string?> GetHtmlAsync()
     {
         return await QuillInterop.GetHtmlAsync(JsRuntime, _quillElement);
+    }
+
+    public async Task InsertTextAtCursor(string Content)
+    {
+        var QuillDelta =
+            await QuillInterop.InsertTextAtCursor(
+                JsRuntime, _quillElement, Content);
+        StateHasChanged();
+
     }
     
     private async Task OnQuillEvent(string eventName, object[] arguments)

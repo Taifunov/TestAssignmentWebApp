@@ -9,7 +9,7 @@
             placeholder,
             theme,
             debugLevel) {
-                
+
             var options = {
                 debug: debugLevel,
                 modules: {
@@ -27,12 +27,21 @@
         getQuillContent: function (quillElement) {
             return JSON.stringify(quillElement.__quill.getContents());
         },
+        insertTextAtCursor: function (quillElement, text) {
+            const quill = this.getInstance(quillElement);
+
+            var range = quill.getSelection();
+
+            if (range) {
+                quill.insertText(range.index, text);
+            } else {
+                quill.focus();
+                range = quill.getSelection();
+                quill.insertText(range.index, text);
+            }
+        },
         getQuillText: function (quillElement) {
             return quillElement.__quill.getText();
-        },
-        loadQuillContent: function (quillElement, quillContent) {
-            content = JSON.parse(quillContent);
-            return quillElement.__quill.setContents(content, 'api');
         },
         insertQuillImage: function (quillElement, imageURL) {
             var Delta = Quill.import('delta');
@@ -79,4 +88,34 @@
             return quill;
         }
     };
-})();
+
+    // Just to not create separate file to simplify pasted this func here
+    window.getElementPositionById = function (selector) {
+        const element = document.querySelector(selector);
+        if (!element) {
+            return null;
+        }
+
+        const rect = element.getBoundingClientRect();
+        const scrollLeft = document.documentElement.scrollLeft;
+        const scrollTop = document.documentElement.scrollTop;
+
+        //return {
+        //    x: rect.x,
+        //    y: rect.y,
+        //    width: rect.width,
+        //    height: rect.height,
+        //    top: rect.top + scrollTop,
+        //    right: rect.right + scrollLeft,
+        //    bottom: rect.bottom + scrollTop,
+        //    left: rect.left + scrollLeft
+        //}
+
+        return {
+            Top: rect.top,
+            Bottom: rect.bottom,
+            Left: rect.left,
+            Right: rect.right
+        };
+    };
+    })();

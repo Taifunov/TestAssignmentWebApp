@@ -1,0 +1,29 @@
+﻿@typeparam T
+
+<ul>
+    @if (!DataSource.Any())
+    {
+        ArgumentNullException.ThrowIfNull(nameof(DataSource));
+    }
+
+    @foreach (var item in DataSource)
+    {
+        <li @onclick="() => OnButtonClick(item)">@item</li>
+    }
+</ul>
+
+@code {
+    [Parameter]
+    public IEnumerable<T>? DataSource { get; set; }
+
+    [Parameter]
+    public EventCallback<T> ButtonEvent { get; set; }
+
+    private async Task OnButtonClick(T item)
+    {
+        if (ButtonEvent.HasDelegate)
+        {
+            await ButtonEvent.InvokeAsync(item);
+        }
+    }
+}
