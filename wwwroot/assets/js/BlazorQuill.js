@@ -1,5 +1,3 @@
-﻿// Ensure you have the quill-blot-formatter library installed
-
 (function () {
     window.QuillFunctions = {
         createQuill: function (
@@ -97,19 +95,6 @@
         }
 
         const rect = element.getBoundingClientRect();
-        const scrollLeft = document.documentElement.scrollLeft;
-        const scrollTop = document.documentElement.scrollTop;
-
-        //return {
-        //    x: rect.x,
-        //    y: rect.y,
-        //    width: rect.width,
-        //    height: rect.height,
-        //    top: rect.top + scrollTop,
-        //    right: rect.right + scrollLeft,
-        //    bottom: rect.bottom + scrollTop,
-        //    left: rect.left + scrollLeft
-        //}
 
         return {
             Top: rect.top,
